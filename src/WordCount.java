@@ -1,9 +1,16 @@
 
+/*
+build:
+    /home/gpf/edr/hadoop-2.8.0/bin/hadoop com.sun.tools.javac.Main WordCount.java
+    jar cf wc.jar WordCount*.class
+run:
+    /home/gpf/edr/hadoop-2.8.0/bin/hadoop jar wc.jar WordCount /user/famgy/wordcount/input /user/famgy/wordcount/output
+*/
+
 import java.io.IOException;
 import java.util.StringTokenizer;
 
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
@@ -35,6 +42,7 @@ public class WordCount {
     }
 
     public static class IntSumReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+
         private IntWritable result = new IntWritable();
 
         public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException {
@@ -45,6 +53,7 @@ public class WordCount {
             result.set(sum);
             context.write(key, result);
         }
+
     }
 
     public static void main(String[] args) throws Exception {
@@ -63,3 +72,4 @@ public class WordCount {
         System.exit(job.waitForCompletion(true) ? 0 : 1);
     }
 }
+
