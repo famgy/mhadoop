@@ -10,36 +10,14 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapred.FileInputFormat;
-import org.apache.hadoop.mapred.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
 public class WordCount {
-
-    static {
-        System.out.println("Hello world!");
-    }
 
     static Configuration conf = new Configuration();
     static {
         conf.set("fs.defaultFS", "hdfs://node1:9000");
-    }
-
-    public static void uploadFileToHdfs(String filePath, String dst) throws Exception {
-        FileSystem hdfs = FileSystem.get(conf);
-        Path srcPath = new Path(filePath);
-        Path dstPath = new Path(dst);
-
-        long start = System.currentTimeMillis();
-        hdfs.copyFromLocalFile(false, srcPath, dstPath);
-
-        System.out.println("Time:" + (System.currentTimeMillis() - start));
-        System.out.println("_________________Upload to "+conf.get("fs.defaultFS") + "________________");
-
-        Path getPath = new Path("/user");
-        long usedSize = hdfs.getUsed(getPath);
-        System.out.println("hdfs used size : " + Long.toString(usedSize));
-
-        hdfs.close();
     }
 
     public static class TokenizerMapper extends Mapper<Object, Text, Text, IntWritable> {
@@ -70,13 +48,6 @@ public class WordCount {
     }
 
     public static void main(String[] args) throws Exception {
-
-        try {
-            uploadFileToHdfs("/home/gpf/test_work/zhuanli-test.txt", "/user/cluster");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
 
         Job job = Job.getInstance(conf, "word count");
         job.setJarByClass(WordCount.class);
